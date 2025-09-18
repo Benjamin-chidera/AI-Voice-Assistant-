@@ -12,6 +12,7 @@ export default function Home() {
 
   // console.log("hasOnBoarded", hasOnBoarded);
 
+
   return (
     <SafeAreaView className=" flex-1 bg-[#0D0D1A] px-7 py-5">
       <View className="flex-row justify-between">

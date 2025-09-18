@@ -1,11 +1,11 @@
-import {create} from 'zustand';
+import { create } from "zustand";
 
 interface OnBoardingStore {
-    hasOnBoarded: boolean;
-    setHasOnBoarded: (value: boolean) => void;
+  hasOnBoarded: boolean | null;
+  setHasOnBoarded: (value: boolean) => void;
 }
 
 export const useOnBoardingStore = create<OnBoardingStore>((set) => ({
-    hasOnBoarded: true,
-    setHasOnBoarded: (value: boolean) => set(() => ({hasOnBoarded: value}))
+  hasOnBoarded: null,
+  setHasOnBoarded: (value) => set({ hasOnBoarded: value }),
 }));

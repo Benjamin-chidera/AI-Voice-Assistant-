@@ -1,15 +1,21 @@
+import { useAuthStore } from "@/store/auth.store";
 import { profileTypes } from "@/types/settings.types";
 import { Image } from "expo-image";
 import { Upload } from "lucide-react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
+const Profile = ({ image, pickImage }: profileTypes) => {
+  const { user, getUser} = useAuthStore();
 
+  console.log(user); 
 
-const Profile = ({image, pickImage}: profileTypes) => {
- 
+  useEffect(() => {  
+    getUser() ;
+  }, []) 
+  
 
-  return (
+  return ( 
     <View>
       <View className="mt-5">
         <TouchableOpacity
@@ -19,7 +25,7 @@ const Profile = ({image, pickImage}: profileTypes) => {
           {image ? (
             <Image
               source={{ uri: image }}
-              style={{
+              style={{ 
                 width: 160,
                 height: 160,
                 borderRadius: 80,
@@ -34,8 +40,8 @@ const Profile = ({image, pickImage}: profileTypes) => {
           )}
         </TouchableOpacity>
 
-        <Text className="mt-4 text-white font-bold text-lg text-center">
-          Benjamin Chidera
+        <Text className="mt-4 text-white font-bold text-lg text-center capitalize">
+          {user.fullname}
         </Text>
       </View>
     </View>

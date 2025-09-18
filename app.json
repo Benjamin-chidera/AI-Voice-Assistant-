@@ -45,7 +45,8 @@
         {
           "photosPermission": "Echo needs access to your photos"
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

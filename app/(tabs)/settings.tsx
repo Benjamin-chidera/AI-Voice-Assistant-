@@ -2,14 +2,15 @@ import GoogleCalendar from "@/components/dev/settings/google-calendar";
 import LanguageSelection from "@/components/dev/settings/language";
 import Profile from "@/components/dev/settings/profile";
 import VoiceSelection from "@/components/dev/settings/voice-selection";
+import { useAuthStore } from "@/store/auth.store";
+import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
 import { Button, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as ImagePicker from "expo-image-picker";
-
 
 const Settings = () => {
   const [image, setImage] = useState<string | null>(null);
+  const { logout } = useAuthStore();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -46,7 +47,7 @@ const Settings = () => {
 
         {/* log out button */}
         <View className="mt-10">
-          <Button title="Log Out" />
+          <Button title="Log Out" onPress={() => logout()} />
         </View>
       </ScrollView>
     </SafeAreaView>
