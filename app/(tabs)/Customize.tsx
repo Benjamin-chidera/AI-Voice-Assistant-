@@ -1,6 +1,7 @@
 import ThemeControl from "@/components/dev/customization/theme-control";
 import VoiceControl from "@/components/dev/customization/voice-control";
 import { useCustomizationStore } from "@/store/customization.store";
+import { useProfileStore } from "@/store/profile.store";
 import { Check } from "lucide-react-native";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -8,11 +9,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const Customize = () => {
   const { voice, language, customize, customizing } = useCustomizationStore();
+  const { bgColors, textColors } = useProfileStore();
 
   return (
-    <SafeAreaView className=" flex-1 bg-[#0D0D1A] px-5 py-5">
+    <SafeAreaView
+      className={`flex-1  px-5 py-5`}
+      style={{ backgroundColor: bgColors }}
+    >
       <View className="flex-row justify-between items-center mb-5">
-        <Text className="text-white font-bold text-2xl text-center">
+        <Text className={`${textColors} font-bold text-2xl text-center`}>
           Customization
         </Text>
 

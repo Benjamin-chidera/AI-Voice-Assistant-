@@ -1,4 +1,5 @@
 import { useCustomizationStore } from "@/store/customization.store";
+import { useProfileStore } from "@/store/profile.store";
 import { Picker } from "@react-native-picker/picker";
 import { SquareArrowUpRight } from "lucide-react-native";
 import React from "react";
@@ -8,15 +9,14 @@ const VoiceControl = () => {
   const voice_names = ["alloy", "ash", "ballad", "coral", "echo"];
 
   const { voice, setVoice, language, setLanguage } = useCustomizationStore();
-
-  // console.log(language, voice);
+  const { bgColors, textColors } = useProfileStore();
 
   return (
     <View className="rounded-xl border border-white/10 bg-white/5 p-4 shadow-lg backdrop-blur-xl space-y-4 mb-5">
-      <Text className="text-lg font-bold text-white">Voice Control</Text>
+      <Text className={`text-lg font-bold ${textColors}`}>Voice Control</Text>
 
       <View>
-        <Text className="text-sm text-white">AI Voice Selection</Text>
+        <Text className={`text-sm ${textColors}`}>AI Voice Selection</Text>
 
         <View className="mt-2">
           {voice_names.map((names, i) => (
@@ -31,7 +31,7 @@ const VoiceControl = () => {
               onPress={() => setVoice(names)}
               disabled={voice === names}
             >
-              <Text className="text-sm text-white capitalize">{names}</Text>
+              <Text className={`text-sm ${textColors} capitalize`}>{names}</Text>
 
               {/* Icon Wrapper */}
               <View className="w-fit h-fit rounded-full p-2 bg-blue-500">
@@ -45,7 +45,7 @@ const VoiceControl = () => {
         </View>
         <View className=" mt-4">
           <View>
-            <Text className="text-sm text-white">Echo Langauage Output</Text>
+            <Text className={`text-sm ${textColors}`}>Echo Langauage Output</Text>
             <Picker
               selectedValue={language}
               // style={styles.picker}

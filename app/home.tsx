@@ -1,6 +1,7 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { useCommunicationStore } from "@/store/communication.store";
 import { useCustomizationStore } from "@/store/customization.store";
+import { useProfileStore } from "@/store/profile.store";
 // import { useOnBoardingStore } from "@/store/onBoarding.store";
 import {
   AudioModule,
@@ -20,6 +21,7 @@ export default function Home() {
   // const { hasOnBoarded } = useOnBoardingStore();
   const { voice, messages, isProcessing } = useCommunicationStore();
   const { color, loadSettings } = useCustomizationStore();
+  const { loadColors, textColors, bgColors } = useProfileStore();
   const [show, setShow] = useState(true);
 
   const [isRecording, setIsRecording] = useState(false);
@@ -33,7 +35,8 @@ export default function Home() {
   useEffect(() => {
     // Load saved settings when app starts
     loadSettings();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadColors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRecording = async () => {
@@ -99,10 +102,13 @@ export default function Home() {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-[#0D0D1A] px-5 py-5">
+    <SafeAreaView
+      className={`flex-1 px-5 py-5`}
+      style={{ backgroundColor: bgColors }}
+    >
       {/* Header - Fixed */}
       <View className="flex-row justify-between mb-5">
-        <Text className="text-white font-bold text-2xl tracking-wider">
+        <Text className={`${textColors} font-bold text-2xl tracking-wider`}>
           Voice Assistant
         </Text>
 

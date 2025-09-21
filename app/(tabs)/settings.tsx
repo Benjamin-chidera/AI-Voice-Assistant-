@@ -1,13 +1,18 @@
-import Profile from "@/components/dev/settings/profile";import { useAuthStore } from "@/store/auth.store";
+import Auth from "@/components/dev/settings/auth";
+import Profile from "@/components/dev/settings/profile";
+import Theme from "@/components/dev/settings/theme";
+import { useAuthStore } from "@/store/auth.store";
+import { useProfileStore } from "@/store/profile.store";
 import * as ImagePicker from "expo-image-picker";
-import { LogOut } from "lucide-react-native";
+import { Check } from "lucide-react-native";
 import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Button, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Settings = () => {
   const [image, setImage] = useState<string | null>(null);
   const { logout } = useAuthStore();
+  const { bgColors, textColors } = useProfileStore();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -24,16 +29,23 @@ const Settings = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#0D0D1A] px-7 py-5">
+    <SafeAreaView
+      className={`flex-1  px-5 py-5`}
+      style={{ backgroundColor: bgColors }}
+    >
       <View className=" flex-row justify-between items-center mb-5">
-        <Text className="text-center text-white font-bold text-3xl">
+        <Text className={`text-center ${textColors} font-bold text-3xl`}>
           Settings
         </Text>
 
-        <TouchableOpacity onPress={() => logout()}>
-          <Text>
-            <LogOut color={"#fff"} size={24} />
-          </Text>
+        <TouchableOpacity
+          className="bg-gray-800 rounded-full p-2"
+          // disabled={customizing}
+          // onPress={async () => {
+          //   await customize({ voice, language });
+          // }}
+        >
+          <Check color={"#d8b4fe"} />
         </TouchableOpacity>
       </View>
 
@@ -41,21 +53,23 @@ const Settings = () => {
       <Profile image={image} pickImage={pickImage} />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* <ProfileModal /> */}
-        {/* Email */}
-
-        {/* Full name */}
+   
+        {/* Auth */}
+        <View className=" mt-2">
+          <Text className={`${textColors} font-bold text-lg`}>
+            Update Account
+          </Text>
+          <Auth />
+        </View>
 
         {/* Theme toggle for bg color and text color */}
+        <View className=" mt-3">
+          <Theme />
+        </View>
 
         {/* log out button */}
         <View className="mt-10 ">
-          <TouchableOpacity
-            className=" w-full h-16 bg-blue-300 rounded-lg py-3 text-center text-white font-bold items-center justify-center"
-            activeOpacity={0.4}
-          >
-            <Text className="text-lg font-bold">Save Changes</Text>
-          </TouchableOpacity>
+          <Button title="Log Out" onPress={() => logout()} />
         </View>
       </ScrollView>
     </SafeAreaView>

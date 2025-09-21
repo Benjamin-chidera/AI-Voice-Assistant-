@@ -1,5 +1,6 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { useChatStore } from "@/store/chat";
+import { useProfileStore } from "@/store/profile.store";
 import { router } from "expo-router";
 import { ArrowLeft, Send } from "lucide-react-native";
 import React from "react";
@@ -16,14 +17,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const Conversation = () => {
   const { chat, setChat, sendChat, isProcessing, messages } = useChatStore();
-
-  console.log(chat);
+  const { bgColors, textColors } = useProfileStore();
 
   const handSendChat = async () => {
     await sendChat({ chat });
   };
   return (
-    <SafeAreaView className=" flex-1 bg-[#0D0D1A] px-3 py-5">
+    <SafeAreaView
+      className={` flex-1  px-5 py-5`}
+      style={{ backgroundColor: bgColors }}
+    >
       <View className=" flex-row items-center justify-between mb-5">
         <Pressable onPress={() => router.push("/home")}>
           <Text>
@@ -31,7 +34,7 @@ const Conversation = () => {
           </Text>
         </Pressable>
 
-        <Text className="text-white font-bold text-2xl">Conversation</Text>
+        <Text className={`${textColors} font-bold text-2xl`}>Conversation</Text>
       </View>
 
       <KeyboardAvoidingView

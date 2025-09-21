@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/store/auth.store";
+import { useProfileStore } from "@/store/profile.store";
 import { profileTypes } from "@/types/settings.types";
 import { Image } from "expo-image";
 import { Upload } from "lucide-react-native";
@@ -7,6 +8,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 const Profile = ({ image, pickImage }: profileTypes) => {
   const { user, getUser} = useAuthStore();
+  const { bgColors, textColors } = useProfileStore();
 
   console.log(user); 
 
@@ -35,12 +37,12 @@ const Profile = ({ image, pickImage }: profileTypes) => {
           ) : (
             <View className="justify-center items-center">
               <Upload size={30} color="white" />
-              <Text className="text-white text-sm mt-2">Upload Photo</Text>
+              <Text className={`${textColors} text-sm mt-2`}>Upload Photo</Text>
             </View>
           )}
         </TouchableOpacity>
 
-        <Text className="mt-4 text-white font-bold text-lg text-center capitalize">
+        <Text className={`mt-4 ${textColors} font-bold text-lg text-center capitalize`}>
           {user.fullname}
         </Text>
       </View>
