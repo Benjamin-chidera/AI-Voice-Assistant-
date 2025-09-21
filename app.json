@@ -41,10 +41,16 @@
         }
       ],
       [
-        "expo-image-picker",
-        {
-          "photosPermission": "Echo needs access to your photos"
-        }
+          "expo-image-picker",
+          {
+            "photosPermission": "Echo needs access to your photos"
+          }
+        ],
+        [
+          "expo-audio",
+          {
+            "microphonePermission": "Echo needs access to your microphonePermission."
+          }
       ],
       "expo-secure-store"
     ],

@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Bell, MessageCircle, Settings } from "lucide-react-native";
+import { Component, MessageCircle, Settings } from "lucide-react-native";
 import React from "react";
 
 const TabsLayout = () => {
@@ -11,6 +11,9 @@ const TabsLayout = () => {
         tabBarStyle: {
           backgroundColor: "#0D0D1A",
           borderTopColor: "#0D0D1A",
+          // paddingBottom:0,
+          // marginBottom:0,
+          
         },
       }}
     >
@@ -25,11 +28,11 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="reminders"
+        name="Customize"
         options={{
-          title: "Reminders",
+          title: "Customize",
           tabBarIcon: ({ color, size }) => {
-            return <Bell size={size} color={color} />;
+            return <Component size={size} color={color} />;
           },
         }}
       />

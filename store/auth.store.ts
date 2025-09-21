@@ -4,21 +4,21 @@ import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 import { create } from "zustand";
 
-const api = !process.env.EXPO_API_URL;
+// const api = !process.env.EXPO_API_URL;
 
-console.log(api);
-
+// console.log(api);
 
 interface AuthState {
   // User state
   user: {
     id: number | null;
     email: string | null;
+    profile_pic: string | null;
     fullname: string | null;
-    image: string | null;
+    voice: string | null;
   };
   token: string | null;
-  isAuthenticated: boolean;
+  isAuthenticated: boolean; 
   setIsAuthenticated: (isAuthenticated: boolean) => void;
 
   // Form state
@@ -55,7 +55,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     id: null,
     email: null,
     fullname: null,
-    image: null,
+    profile_pic: null,
+    voice: null,
   },
   token: null,
   isAuthenticated: false,
@@ -87,11 +88,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
 
       set({ loading: true });
-      const response = await axios.post(`http://192.168.0.21:8000/auth/register`, {
-        fullname,
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `http://192.168.0.21:8000/auth/register`,
+        {
+          fullname,
+          email,
+          password,
+        }
+      );
 
       if (response.status === 201) {
         const { access_token, user } = response.data;
@@ -194,7 +198,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       console.log(user);
 
-      const { data } = await axios(`http://192.168.0.21:8000/auth/user/${user.id}/`);
+      const { data } = await axios(
+        `http://192.168.0.21:8000/auth/user/${user.id}/`
+      );
 
       console.log(data);
 
@@ -211,8 +217,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         user: {
           email: null,
           fullname: null,
-          image: null,
+          profile_pic: null,
           id: null,
+          voice: null,
         },
         token: null,
         isAuthenticated: false,

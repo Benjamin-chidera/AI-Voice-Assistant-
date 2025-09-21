@@ -1,9 +1,11 @@
+import { useProfileStore } from "@/store/profile.store";
 import { ArrowRight, Mic } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const VoiceSelection = () => {
   const [visible, setVisible] = useState(false);
+  const { voice, setVoice } = useProfileStore();
 
   return (
     <View>
@@ -24,8 +26,10 @@ const VoiceSelection = () => {
             </View>
 
             <View>
-              <Text className="text-white font-bold text-lg">Voice Selection</Text>
-              <Text className="text-gray-200 text-lg">Default</Text>
+              <Text className="text-white font-bold text-lg">
+                Voice Selection
+              </Text>
+              <Text className="text-gray-200 text-lg">{voice}</Text>
             </View>
           </View>
 
@@ -51,34 +55,38 @@ const VoiceSelection = () => {
             shadowRadius: 3.84,
             elevation: 5,
             minWidth: 150,
-            zIndex : 1000
+            zIndex: 1000,
           }}
         >
           <TouchableOpacity
             onPress={() => {
               setVisible(false);
+              setVoice("Alloy");
             }}
             style={{ padding: 12 }}
           >
-            <Text>Conversation</Text>
+            <Text>Alloy</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => {
               setVisible(false);
+              setVoice("Verse");
             }}
             style={{ padding: 12 }}
           >
-            <Text>Reminders</Text>
+            <Text>Verse</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => {
               setVisible(false);
+              setVoice("Aria");
+
             }}
             style={{ padding: 12 }}
           >
-            <Text>Settings</Text>
+            <Text>Aria</Text>
           </TouchableOpacity>
         </View>
       )}
