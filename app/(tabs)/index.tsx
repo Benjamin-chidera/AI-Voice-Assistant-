@@ -1,10 +1,12 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { useChatStore } from "@/store/chat";
-import { Send } from "lucide-react-native";
+import { router } from "expo-router";
+import { ArrowLeft, Send } from "lucide-react-native";
 import React from "react";
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   TextInput,
@@ -22,7 +24,15 @@ const Conversation = () => {
   };
   return (
     <SafeAreaView className=" flex-1 bg-[#0D0D1A] px-3 py-5">
-      <Text className="text-white font-bold text-2xl">Conversation</Text>
+      <View className=" flex-row items-center justify-between mb-5">
+        <Pressable onPress={() => router.push("/home")}>
+          <Text>
+            <ArrowLeft color={"white"} size={24} />
+          </Text>
+        </Pressable>
+
+        <Text className="text-white font-bold text-2xl">Conversation</Text>
+      </View>
 
       <KeyboardAvoidingView
         className="flex-1"

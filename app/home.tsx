@@ -1,6 +1,7 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { useCommunicationStore } from "@/store/communication.store";
-import { useOnBoardingStore } from "@/store/onBoarding.store";
+import { useCustomizationStore } from "@/store/customization.store";
+// import { useOnBoardingStore } from "@/store/onBoarding.store";
 import {
   AudioModule,
   RecordingPresets,
@@ -10,14 +11,16 @@ import {
 } from "expo-audio";
 
 import { Link } from "expo-router";
-import { Mic, MicOff, Settings } from "lucide-react-native";
+import { Eye, EyeOff, MessageCircle, Mic, MicOff } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
-  const { hasOnBoarded } = useOnBoardingStore();
+  // const { hasOnBoarded } = useOnBoardingStore();
   const { voice, messages, isProcessing } = useCommunicationStore();
+  const { color, loadSettings } = useCustomizationStore();
+  const [show, setShow] = useState(true);
 
   const [isRecording, setIsRecording] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -26,6 +29,12 @@ export default function Home() {
   const recorderState = useAudioRecorderState(audioRecorder);
 
   console.log("Recorder state:", recorderState);
+
+  useEffect(() => {
+    // Load saved settings when app starts
+    loadSettings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleRecording = async () => {
     if (!isReady) {
@@ -90,7 +99,7 @@ export default function Home() {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-[#0D0D1A] px-7 py-5">
+    <SafeAreaView className="flex-1 bg-[#0D0D1A] px-5 py-5">
       {/* Header - Fixed */}
       <View className="flex-row justify-between mb-5">
         <Text className="text-white font-bold text-2xl tracking-wider">
@@ -99,9 +108,9 @@ export default function Home() {
 
         <View>
           <Button action={"primary"} variant={"link"} size={"sm"}>
-            <Link href={"/(tabs)/settings"}>
+            <Link href={"/(tabs)"}>
               <ButtonText>
-                <Settings color={"#d8b4fe"} />
+                <MessageCircle color={"#d8b4fe"} />
               </ButtonText>
             </Link>
           </Button>
@@ -112,7 +121,7 @@ export default function Home() {
       <View className="flex-1 relative">
         {/* Scrollable Text Background */}
         <ScrollView
-          className="flex-1 px-4"
+          className="flex-1"
           contentContainerStyle={{ paddingTop: 100, paddingBottom: 200 }}
           showsVerticalScrollIndicator={false}
         >
@@ -141,38 +150,46 @@ export default function Home() {
           </View>
         </ScrollView>
 
-        <View
-          className="absolute inset-0 justify-center items-center"
-          pointerEvents="box-none"
-        >
-          <Button
-            onPress={handleRecording}
-            action={"primary"}
-            variant={"solid"}
-            size={"lg"}
-            className={`w-32 h-32 rounded-full ${
-              isRecording ? "bg-red-500" : "bg-blue-500"
-            } shadow-lg`}
+        {/* Mic Button - Fixed in Center */}
+        {show && (
+          <View
+            className="absolute inset-0 justify-center items-center"
+            pointerEvents="box-none"
           >
-            <ButtonText>
-              {isRecording ? (
-                <MicOff color={"white"} size={48} />
-              ) : (
-                <Mic color={"white"} size={48} />
-              )}
-            </ButtonText>
-          </Button>
+            <Button
+              onPress={handleRecording}
+              disabled={isProcessing}
+              action={"primary"}
+              variant={"solid"}
+              size={"lg"}
+              className={`w-32 h-32 rounded-full ${
+                isRecording ? "bg-red-500" : color
+              } shadow-lg`}
+            >
+              <ButtonText>
+                {isRecording ? (
+                  <MicOff color={"white"} size={48} />
+                ) : (
+                  <Mic color={"white"} size={48} />
+                )}
+              </ButtonText>
+            </Button>
+          </View>
+        )}
 
-          <Text className="text-gray-400 mt-4 text-center">
-            {isRecording ? "Tap to stop recording" : "Tap to start recording"}
-          </Text>
-
-          {!isReady && (
-            <Text className="text-red-400 mt-2 text-sm text-center">
-              Waiting for microphone permission...
-            </Text>
+        {/* Eye Toggle Button - Fixed Position with Higher Z-Index */}
+        <TouchableOpacity
+          activeOpacity={1}
+          className="absolute bottom-5 right-5 bg-gray-800/80 rounded-full p-3 z-50"
+          onPress={() => setShow(!show)}
+          style={{ elevation: 10 }} // Android shadow/elevation
+        >
+          {!show ? (
+            <Eye color={"#d8b4fe"} size={24} />
+          ) : (
+            <EyeOff color={"#d8b4fe"} size={24} />
           )}
-        </View>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

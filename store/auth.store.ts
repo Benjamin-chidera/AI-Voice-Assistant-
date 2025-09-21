@@ -199,7 +199,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       console.log(user);
 
       const { data } = await axios(
-        `http://192.168.0.21:8000/auth/user/${user.id}/`
+        `http://192.168.0.21:8000/auth/user/${user?.id}/`
       );
 
       console.log(data);

@@ -1,17 +1,36 @@
 import ThemeControl from "@/components/dev/customization/theme-control";
 import VoiceControl from "@/components/dev/customization/voice-control";
+import { useCustomizationStore } from "@/store/customization.store";
+import { Check } from "lucide-react-native";
 import React from "react";
-import { ScrollView, Text } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Customize = () => {
-  return (
-    <SafeAreaView className=" flex-1 bg-[#0D0D1A] px-7 py-5">
-      <Text className="text-white font-bold text-2xl text-center">
-        Customization
-      </Text>
+  const { voice, language, customize, customizing } = useCustomizationStore();
 
-      <ScrollView className="pt-10 flex-col gap-5">
+  return (
+    <SafeAreaView className=" flex-1 bg-[#0D0D1A] px-5 py-5">
+      <View className="flex-row justify-between items-center mb-5">
+        <Text className="text-white font-bold text-2xl text-center">
+          Customization
+        </Text>
+
+        <TouchableOpacity
+          className="bg-gray-800 rounded-full p-2"
+          disabled={customizing}
+          onPress={async () => {
+            await customize({ voice, language });
+          }}
+        >
+          <Check color={"#d8b4fe"} />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView
+        className="pt-8 flex-col gap-5"
+        showsVerticalScrollIndicator={false}
+      >
         <VoiceControl />
 
         <ThemeControl />

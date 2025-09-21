@@ -1,8 +1,4 @@
-import GoogleCalendar from "@/components/dev/settings/google-calendar";
-import LanguageSelection from "@/components/dev/settings/language";
-import Profile from "@/components/dev/settings/profile";
-import VoiceSelection from "@/components/dev/settings/voice-selection";
-import { useAuthStore } from "@/store/auth.store";
+import Profile from "@/components/dev/settings/profile";import { useAuthStore } from "@/store/auth.store";
 import * as ImagePicker from "expo-image-picker";
 import { LogOut } from "lucide-react-native";
 import React, { useState } from "react";
@@ -46,14 +42,11 @@ const Settings = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* <ProfileModal /> */}
-        {/* Voice selection */}
-        <VoiceSelection />
+        {/* Email */}
 
-        {/* Language selection */}
-        <LanguageSelection />
+        {/* Full name */}
 
-        {/* Language selection */}
-        <GoogleCalendar />
+        {/* Theme toggle for bg color and text color */}
 
         {/* log out button */}
         <View className="mt-10 ">
