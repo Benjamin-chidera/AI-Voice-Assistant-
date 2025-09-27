@@ -13,23 +13,27 @@ interface AuthState {
   user: {
     id: number | null;
     email: string | null;
-    profile_pic: string | null;
+    image: string | null;
     fullname: string | null;
     voice: string | null;
   };
   token: string | null;
-  isAuthenticated: boolean; 
+  isAuthenticated: boolean;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
 
   // Form state
   fullname: string;
   email: string;
   password: string;
+  confirmPassword: string;
+  image: string | null;
 
   // Actions
   setFullname: (fullname: string) => void;
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
+  setConfirmPassword: (confirmPassword: string) => void;
+  setImage: (image: string | null) => void;
   register: (data: {
     fullname: string;
     email: string;
@@ -47,6 +51,15 @@ interface AuthState {
 
   //   logout
   logout: () => Promise<void>;
+
+  // update user profile
+  updateProfile: (data: {
+    fullname: string;
+    email: string;
+    confirmPassword: string;
+    password: string;
+    image: string | null;
+  }) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -55,8 +68,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     id: null,
     email: null,
     fullname: null,
-    profile_pic: null,
+    // profile_pic: null,
     voice: null,
+    image: null,
   },
   token: null,
   isAuthenticated: false,
@@ -64,11 +78,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   fullname: "",
   email: "",
   password: "",
+  confirmPassword: "",
+  image: null,
 
   // Form setters
   setFullname: (fullname: string) => set({ fullname }),
   setEmail: (email: string) => set({ email }),
   setPassword: (password: string) => set({ password }),
+  setConfirmPassword: (confirmPassword: string) => set({ confirmPassword }),
+  setImage: (image: string | null) => set({ image }),
 
   // Loading state
   loading: false,
@@ -102,7 +120,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         // Persist token
         await SecureStore.setItemAsync("token", access_token);
-        console.log(response.data);
 
         // Update state
         set({
@@ -196,16 +213,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       const user = jwtDecode<DecodedToken>(token);
 
-      console.log(user);
-
       const { data } = await axios(
         `http://192.168.0.21:8000/auth/user/${user?.id}/`
-      );
-
-      console.log(data);
+      );      
 
       set({
         user: data,
+        image: data.profile_pic,
       });
     }
   },
@@ -217,9 +231,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         user: {
           email: null,
           fullname: null,
-          profile_pic: null,
+          // profile_pic: null,
           id: null,
           voice: null,
+          image: null,
         },
         token: null,
         isAuthenticated: false,
@@ -229,6 +244,68 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       router.replace("/(auth)/sign-in");
     } catch (error) {
       console.error("Logout error:", error);
+    }
+  },
+
+  updateProfile: async (datas: {
+    fullname: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    image: string | null;
+  }) => {
+    try {
+      const { fullname, email, password, confirmPassword, image } = datas;
+      const token = await SecureStore.getItemAsync("token");
+
+      if (token) {
+        interface DecodedToken {
+          id: number;
+          exp: number;
+        }
+        const user = jwtDecode<DecodedToken>(token);
+        set({ loading: true });
+
+        // Build FormData
+        const formData = new FormData();
+        formData.append("fullname", fullname);
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("confirmPassword", confirmPassword);
+
+        if (image) {
+          const uriParts = image.split(".");
+          const fileType = uriParts[uriParts.length - 1];
+
+          formData.append("profile_pic", {
+            uri: image,
+            name: `profile.${fileType}`,
+            type: `image/${fileType}`,
+          } as any);
+        }
+
+        const { data } = await axios.patch(
+          `http://192.168.0.21:8000/auth/user/${user?.id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            }, 
+          }
+        );
+
+        console.log("Updated user:", data.user.profile_pic);
+
+        set({
+          user: data.user, 
+          image: data.user.profile_pic,
+          loading: false,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      set({ loading: false });
     }
   },
 }));

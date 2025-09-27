@@ -7,17 +7,17 @@ import React, { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const Profile = ({ image, pickImage }: profileTypes) => {
-  const { user, getUser} = useAuthStore();
-  const { bgColors, textColors } = useProfileStore();
+  const { user, getUser } = useAuthStore();
 
-  console.log(user); 
+  const { textColors } = useProfileStore();
 
-  useEffect(() => {  
-    getUser() ;
-  }, []) 
-  
+  // console.log(user);
 
-  return ( 
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  return (
     <View>
       <View className="mt-5">
         <TouchableOpacity
@@ -27,7 +27,7 @@ const Profile = ({ image, pickImage }: profileTypes) => {
           {image ? (
             <Image
               source={{ uri: image }}
-              style={{ 
+              style={{
                 width: 160,
                 height: 160,
                 borderRadius: 80,
@@ -42,7 +42,9 @@ const Profile = ({ image, pickImage }: profileTypes) => {
           )}
         </TouchableOpacity>
 
-        <Text className={`mt-4 ${textColors} font-bold text-lg text-center capitalize`}>
+        <Text
+          className={`mt-4 ${textColors} font-bold text-lg text-center capitalize`}
+        >
           {user.fullname}
         </Text>
       </View>
