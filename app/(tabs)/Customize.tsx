@@ -33,7 +33,7 @@ const Customize = () => {
       </View>
 
       <ScrollView
-        className="pt-8 flex-col gap-5"
+        className="flex-col gap-5"
         showsVerticalScrollIndicator={false}
       >
         <VoiceControl />

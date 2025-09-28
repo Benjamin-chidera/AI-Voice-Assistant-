@@ -7,6 +7,8 @@ import {
   AudioModule,
   RecordingPresets,
   setAudioModeAsync,
+  // for playing sound
+  // useAudioPlayer,
   useAudioRecorder,
   useAudioRecorderState,
 } from "expo-audio";
@@ -19,10 +21,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
   // const { hasOnBoarded } = useOnBoardingStore();
-  const { voice, messages, isProcessing } = useCommunicationStore();
+  const {
+    voice,
+    messages,
+    isProcessing,
+    // communication_response: { speech_response },
+    // ai_response,
+    // stream,
+    // url,
+  } = useCommunicationStore();
   const { color, loadSettings } = useCustomizationStore();
   const { loadColors, textColors, bgColors } = useProfileStore();
   const [show, setShow] = useState(true);
+  // const [player, setPlayer] = useState<any>(null);
 
   const [isRecording, setIsRecording] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -30,7 +41,7 @@ export default function Home() {
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
 
-  console.log("Recorder state:", recorderState);
+  // console.log("Recorder state:", recorderState);
 
   useEffect(() => {
     // Load saved settings when app starts
@@ -54,7 +65,7 @@ export default function Home() {
         // safer than relying on recorderState.url
         const recordingUrl = audioRecorder.uri;
         if (recordingUrl) {
-          console.log("Processing audio:", recordingUrl);
+          // console.log("Processing audio:", recordingUrl);
           await voice(recordingUrl);
         }
       } else {
@@ -101,6 +112,28 @@ export default function Home() {
     })();
   }, []);
 
+  // this is for playing the sound audio
+
+  // const audioPlayer = useAudioPlayer(url); // Hook must be called at the top level
+
+  // useEffect(() => {
+  //   (async () => {
+  //     await stream(ai_response);
+  //     if (url) {
+  //       setPlayer(audioPlayer); // store it in state
+  //     }
+  //   })();
+  // }, [url, audioPlayer]);
+
+  // const handlePlay = async () => {
+  //   console.log("Playing audio from URL:", url);
+
+  //   // if (player) {
+  //   //   await player.play(); // only plays when user presses button
+  //   // }
+  //   await stream(ai_response);
+  // };
+
   return (
     <SafeAreaView
       className={`flex-1 px-5 py-5`}
@@ -111,7 +144,7 @@ export default function Home() {
         <Text className={`${textColors} font-bold text-2xl tracking-wider`}>
           Voice Assistant
         </Text>
-
+ 
         <View>
           <Button action={"primary"} variant={"link"} size={"sm"}>
             <Link href={"/(tabs)"}>
@@ -182,6 +215,14 @@ export default function Home() {
             </Button>
           </View>
         )}
+
+        {/* this is to play the sound */}
+        {/* <View>
+          <Button onPress={handlePlay}>
+            <ButtonText className=" text-white">Play Sound</ButtonText>
+          </Button>
+        </View> */}
+        {/* this is to play the sound */}
 
         {/* Eye Toggle Button - Fixed Position with Higher Z-Index */}
         <TouchableOpacity

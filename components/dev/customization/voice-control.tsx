@@ -16,7 +16,7 @@ const VoiceControl = () => {
       <Text className={`text-lg font-bold ${textColors}`}>Voice Control</Text>
 
       <View>
-        <Text className={`text-sm ${textColors}`}>AI Voice Selection</Text>
+        {/* <Text className={`text-sm ${textColors}`}>AI Voice Selection</Text>
 
         <View className="mt-2">
           {voice_names.map((names, i) => (
@@ -33,7 +33,7 @@ const VoiceControl = () => {
             >
               <Text className={`text-sm ${textColors} capitalize`}>{names}</Text>
 
-              {/* Icon Wrapper */}
+            
               <View className="w-fit h-fit rounded-full p-2 bg-blue-500">
                 <SquareArrowUpRight
                   size={16}
@@ -42,8 +42,8 @@ const VoiceControl = () => {
               </View>
             </TouchableOpacity>
           ))}
-        </View>
-        <View className=" mt-4">
+        </View> */}
+        <View className="">
           <View>
             <Text className={`text-sm ${textColors}`}>Echo Langauage Output</Text>
             <Picker
