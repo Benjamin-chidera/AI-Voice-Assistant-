@@ -1,8 +1,8 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { create } from "zustand";
-import * as FileSystem from 'expo-file-system';
-import { Buffer } from 'buffer';
+import * as Speech from "expo-speech";
+
 
 
 interface Message {
@@ -26,7 +26,7 @@ interface CommunicationStore {
     speech_response: string;
   };
 
-  voice: (uri: string) => Promise<void>;
+  voice: (uri: string, language: string) => Promise<void>;
   // stream: (uri: string) => Promise<void>;
   clearMessages: () => void;
 }
@@ -37,13 +37,13 @@ export const useCommunicationStore = create<CommunicationStore>((set, get) => ({
   ai_response: "",
   url: "",
 
-  communication_response: {
+  communication_response: { 
     ai_response: "",
     user_text: "",
     speech_response: "",
   },
 
-  voice: async (uri) => {
+  voice: async (uri, language) => {
     try {
       set({ isProcessing: true });
 
@@ -71,6 +71,13 @@ export const useCommunicationStore = create<CommunicationStore>((set, get) => ({
 
       // Update the latest response (for backward compatibility)
       set({ communication_response: data, ai_response: data.ai_response });
+
+      Speech.speak(data.ai_response, {
+        volume: 0.5,
+        language: language,
+        // rate: 0.8,
+        pitch: 1.0,
+      });
 
       // Add messages to conversation history
       const currentMessages = get().messages;

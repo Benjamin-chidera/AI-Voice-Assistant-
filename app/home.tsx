@@ -12,6 +12,7 @@ import {
   useAudioRecorder,
   useAudioRecorderState,
 } from "expo-audio";
+import * as Speech from "expo-speech";
 
 import { Link } from "expo-router";
 import { Eye, EyeOff, MessageCircle, Mic, MicOff } from "lucide-react-native";
@@ -21,16 +22,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
   // const { hasOnBoarded } = useOnBoardingStore();
-  const {
-    voice,
-    messages,
-    isProcessing,
-    // communication_response: { speech_response },
-    // ai_response,
-    // stream,
-    // url,
-  } = useCommunicationStore();
-  const { color, loadSettings } = useCustomizationStore();
+  const { voice, messages, isProcessing, ai_response } =
+    useCommunicationStore();
+  const { color, loadSettings, language } = useCustomizationStore();
   const { loadColors, textColors, bgColors } = useProfileStore();
   const [show, setShow] = useState(true);
   // const [player, setPlayer] = useState<any>(null);
@@ -66,7 +60,7 @@ export default function Home() {
         const recordingUrl = audioRecorder.uri;
         if (recordingUrl) {
           // console.log("Processing audio:", recordingUrl);
-          await voice(recordingUrl);
+          await voice(recordingUrl, language);
         }
       } else {
         // Reset any existing session
@@ -99,10 +93,7 @@ export default function Home() {
         await setAudioModeAsync({
           allowsRecording: true,
           playsInSilentMode: true,
-          // interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-          // interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-          // shouldDuckAndroid: true,
-          // playThroughEarpieceAndroid: false,
+          shouldRouteThroughEarpiece: true,
         });
 
         setIsReady(true); // ✅ mark ready here
@@ -114,25 +105,15 @@ export default function Home() {
 
   // this is for playing the sound audio
 
-  // const audioPlayer = useAudioPlayer(url); // Hook must be called at the top level
-
-  // useEffect(() => {
-  //   (async () => {
-  //     await stream(ai_response);
-  //     if (url) {
-  //       setPlayer(audioPlayer); // store it in state
-  //     }
-  //   })();
-  // }, [url, audioPlayer]);
-
-  // const handlePlay = async () => {
-  //   console.log("Playing audio from URL:", url);
-
-  //   // if (player) {
-  //   //   await player.play(); // only plays when user presses button
-  //   // }
-  //   await stream(ai_response);
-  // };
+  const speak = () => {
+    // const thingToSay = "How are you today?";
+    Speech.speak(ai_response, {
+      volume: 0.5,
+      language: language,
+      // rate: 0.8,
+      pitch: 1.0,
+    });
+  };
 
   return (
     <SafeAreaView
@@ -144,7 +125,7 @@ export default function Home() {
         <Text className={`${textColors} font-bold text-2xl tracking-wider`}>
           Voice Assistant
         </Text>
- 
+
         <View>
           <Button action={"primary"} variant={"link"} size={"sm"}>
             <Link href={"/(tabs)"}>
@@ -161,10 +142,16 @@ export default function Home() {
         {/* Scrollable Text Background */}
         <ScrollView
           className="flex-1"
-          contentContainerStyle={{ paddingTop: 100, paddingBottom: 200 }}
+          contentContainerStyle={{
+            paddingTop: 100,
+            paddingBottom: 200,
+            flexGrow: 1, // Ensure content can grow
+          }}
           showsVerticalScrollIndicator={false}
+          scrollEnabled={true} // Explicitly enable scrolling
+          keyboardShouldPersistTaps="handled" // Handle taps properly
         >
-          <View className="space-y-4">
+          <View className="space-y-4 flex-1">
             {messages.map((message) => (
               <View
                 key={message.id}
@@ -194,34 +181,38 @@ export default function Home() {
           <View
             className="absolute inset-0 justify-center items-center"
             pointerEvents="box-none"
-          >
-            <Button
-              onPress={handleRecording}
-              disabled={isProcessing}
-              action={"primary"}
-              variant={"solid"}
-              size={"lg"}
-              className={`w-32 h-32 rounded-full ${
-                isRecording ? "bg-red-500" : color
-              } shadow-lg`}
             >
-              <ButtonText>
-                {isRecording ? (
-                  <MicOff color={"white"} size={48} />
-                ) : (
-                  <Mic color={"white"} size={48} />
-                )}
-              </ButtonText>
-            </Button>
+            <View pointerEvents="auto">
+              <Button
+                onPress={handleRecording}
+                disabled={isProcessing}
+                action={"primary"}
+                variant={"solid"}
+                size={"lg"}
+                className={`w-32 h-32 rounded-full ${
+                  isRecording ? "bg-red-500" : color
+                } shadow-lg`}
+              >
+                <ButtonText>
+                  {isRecording ? (
+                    <MicOff color={"white"} size={48} />
+                  ) : (
+                    <Mic color={"white"} size={48} />
+                  )}
+                </ButtonText>
+              </Button>
+            </View>
           </View>
         )}
 
         {/* this is to play the sound */}
-        {/* <View>
-          <Button onPress={handlePlay}>
-            <ButtonText className=" text-white">Play Sound</ButtonText>
-          </Button>
-        </View> */}
+        {!isProcessing && ai_response && (
+          <View>
+            <Button onPress={speak} disabled={isProcessing} action={"primary"}>
+              <ButtonText className=" text-white">Re-Play Sound</ButtonText>
+            </Button>
+          </View>
+        )}
         {/* this is to play the sound */}
 
         {/* Eye Toggle Button - Fixed Position with Higher Z-Index */}

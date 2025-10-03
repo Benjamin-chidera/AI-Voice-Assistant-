@@ -1,9 +1,8 @@
 import { useCustomizationStore } from "@/store/customization.store";
 import { useProfileStore } from "@/store/profile.store";
 import { Picker } from "@react-native-picker/picker";
-import { SquareArrowUpRight } from "lucide-react-native";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 
 const VoiceControl = () => {
   const voice_names = ["alloy", "ash", "ballad", "coral", "echo"];
@@ -45,7 +44,9 @@ const VoiceControl = () => {
         </View> */}
         <View className="">
           <View>
-            <Text className={`text-sm ${textColors}`}>Echo Langauage Output</Text>
+            <Text className={`text-sm ${textColors}`}>
+              Echo Langauage Output
+            </Text>
             <Picker
               selectedValue={language}
               // style={styles.picker}
