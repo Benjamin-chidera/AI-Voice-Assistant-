@@ -24,7 +24,7 @@ export default function Home() {
   // const { hasOnBoarded } = useOnBoardingStore();
   const { voice, messages, isProcessing, ai_response } =
     useCommunicationStore();
-  const { color, loadSettings, language } = useCustomizationStore();
+  const { color, loadSettings, language, voiceIdentifier } = useCustomizationStore();
   const { loadColors, textColors, bgColors } = useProfileStore();
   const [show, setShow] = useState(true);
   // const [player, setPlayer] = useState<any>(null);
@@ -37,16 +37,23 @@ export default function Home() {
 
   // console.log("Recorder state:", recorderState);
 
+  const listOfVoices = async () => {
+    await Speech.getAvailableVoicesAsync().then((voices) => {
+      // console.log("Available voices:", voices);
+    });
+  };
+
   useEffect(() => {
     // Load saved settings when app starts
     loadSettings();
     loadColors();
+    listOfVoices();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRecording = async () => {
     if (!isReady) {
-      Alert.alert("Recorder not ready yet");
+      Alert.alert("Recorder not ready yet"); 
       return;
     }
 
@@ -93,7 +100,8 @@ export default function Home() {
         await setAudioModeAsync({
           allowsRecording: true,
           playsInSilentMode: true,
-          shouldRouteThroughEarpiece: true,
+          shouldRouteThroughEarpiece: false,
+          shouldPlayInBackground: false,
         });
 
         setIsReady(true); // ✅ mark ready here
@@ -105,13 +113,22 @@ export default function Home() {
 
   // this is for playing the sound audio
 
+  // console.log(voiceIdentifier);
+  
+
   const speak = () => {
     // const thingToSay = "How are you today?";
     Speech.speak(ai_response, {
-      volume: 0.5,
+      volume: 1.0,
       language: language,
-      // rate: 0.8,
+      rate: 0.8,
       pitch: 1.0,
+      voice: voiceIdentifier,
+
+      // quality: Speech.VoiceQuality.Enhanced,
+      onDone: () => {
+        console.log("Speech finished");
+      },
     });
   };
 
@@ -181,7 +198,7 @@ export default function Home() {
           <View
             className="absolute inset-0 justify-center items-center"
             pointerEvents="box-none"
-            >
+          >
             <View pointerEvents="auto">
               <Button
                 onPress={handleRecording}

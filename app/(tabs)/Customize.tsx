@@ -8,8 +8,11 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Customize = () => {
-  const { voice, language, customize, customizing } = useCustomizationStore();
+  const { voice, language, customize, customizing, voiceIdentifier } = useCustomizationStore();
   const { bgColors, textColors } = useProfileStore();
+
+  console.log(voiceIdentifier);
+  
 
   return (
     <SafeAreaView
@@ -25,7 +28,7 @@ const Customize = () => {
           className="bg-gray-800 rounded-full p-2"
           disabled={customizing}
           onPress={async () => {
-            await customize({ voice, language });
+            await customize({ voice, language, voiceIdentifier });
           }}
         >
           <Check color={"#d8b4fe"} />
