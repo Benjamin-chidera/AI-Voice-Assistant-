@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
+import { Alert } from "react-native";
 import { create } from "zustand";
 
 interface CustomizationStore {
@@ -12,10 +13,14 @@ interface CustomizationStore {
   language: string;
   setLanguage: (language: string) => void;
 
-  color: string; 
+  color: string;
   setColor: (color: string) => void;
 
-  customize: (data: { voice: string; language: string, voiceIdentifier?: string }) => Promise<void>;
+  customize: (data: {
+    voice: string;
+    language: string;
+    voiceIdentifier?: string;
+  }) => Promise<void>;
   customizing: boolean;
   loadSettings: () => Promise<void>;
 }
@@ -29,7 +34,7 @@ export const useCustomizationStore = create<CustomizationStore>((set) => ({
 
   voiceIdentifier: "",
   setVoiceIdentifier: (voiceIdentifier: string) => set({ voiceIdentifier }),
- 
+
   color: "bg-blue-500",
   //   setColor: (color: string) => set({ color }),
   setColor: async (color: string) => {
@@ -42,7 +47,11 @@ export const useCustomizationStore = create<CustomizationStore>((set) => ({
   },
   customizing: false,
 
-  customize: async (val: { voice: string; language: string; voiceIdentifier?: string }) => {
+  customize: async (val: {
+    voice: string;
+    language: string;
+    voiceIdentifier?: string;
+  }) => {
     const { voice, language, voiceIdentifier } = val;
     console.log(voice, language);
     try {
@@ -62,11 +71,11 @@ export const useCustomizationStore = create<CustomizationStore>((set) => ({
         set({ customizing: true });
 
         const { data } = await axios.patch(
-          `http://192.168.0.21:8000/echo/customize/${user?.id}`,
+          `${process.env.EXPO_PUBLIC_API_URL}/echo/customize/${user?.id}`,
           {
             voice,
             echo_language_output: language,
-            voice_identifier:voiceIdentifier
+            voice_identifier: voiceIdentifier,
           },
           {
             headers: {
@@ -75,30 +84,39 @@ export const useCustomizationStore = create<CustomizationStore>((set) => ({
             },
           }
         );
-        // console.log(voice, language);
-        set({ voice: data.voice, language: data.echo_language_output, voiceIdentifier: data.voice_identifier });
+        Alert.alert("Success", data?.message);
+        set({
+          voice: data.voice,
+          language: data.echo_language_output,
+          voiceIdentifier: data.voice_identifier,
+        });
         await SecureStore.setItemAsync("selectedVoice", voice);
         await SecureStore.setItemAsync("selectedLanguage", language);
         if (voiceIdentifier) {
-          await SecureStore.setItemAsync("selectedVoiceIdentifier", voiceIdentifier);
+          await SecureStore.setItemAsync(
+            "selectedVoiceIdentifier",
+            voiceIdentifier
+          );
         }
 
         set({ customizing: false });
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.log("Error response:", error?.response?.data?.detail);
+      Alert.alert("Error", error?.response?.data?.detail);
       set({ customizing: false });
     }
   },
 
   loadSettings: async () => {
     try {
-      const [savedColor, savedVoice, savedLanguage, savedVoiceIdentifier] = await Promise.all([
-        SecureStore.getItemAsync("selectedColor"),
-        SecureStore.getItemAsync("selectedVoice"),
-        SecureStore.getItemAsync("selectedLanguage"),
-        SecureStore.getItemAsync("selectedVoiceIdentifier"),
-      ]);
+      const [savedColor, savedVoice, savedLanguage, savedVoiceIdentifier] =
+        await Promise.all([
+          SecureStore.getItemAsync("selectedColor"),
+          SecureStore.getItemAsync("selectedVoice"),
+          SecureStore.getItemAsync("selectedLanguage"),
+          SecureStore.getItemAsync("selectedVoiceIdentifier"),
+        ]);
 
       set({
         color: savedColor || "bg-blue-500",

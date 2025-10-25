@@ -24,7 +24,8 @@ export default function Home() {
   // const { hasOnBoarded } = useOnBoardingStore();
   const { voice, messages, isProcessing, ai_response } =
     useCommunicationStore();
-  const { color, loadSettings, language, voiceIdentifier } = useCustomizationStore();
+  const { color, loadSettings, language, voiceIdentifier } =
+    useCustomizationStore();
   const { loadColors, textColors, bgColors } = useProfileStore();
   const [show, setShow] = useState(true);
   // const [player, setPlayer] = useState<any>(null);
@@ -53,7 +54,7 @@ export default function Home() {
 
   const handleRecording = async () => {
     if (!isReady) {
-      Alert.alert("Recorder not ready yet"); 
+      Alert.alert("Recorder not ready yet");
       return;
     }
 
@@ -114,7 +115,6 @@ export default function Home() {
   // this is for playing the sound audio
 
   // console.log(voiceIdentifier);
-  
 
   const speak = () => {
     // const thingToSay = "How are you today?";

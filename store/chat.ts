@@ -71,7 +71,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
       // Make API call
       const response = await axios.post(
-        "http://192.168.0.21:8000/chat/chat_with_ai",
+        `${process.env.EXPO_PUBLIC_API_URL}/chat/chat_with_ai`,
         { message: chat },
         {
           headers: {

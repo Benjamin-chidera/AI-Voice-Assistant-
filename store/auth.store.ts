@@ -2,11 +2,8 @@ import axios from "axios";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
+import { Alert } from "react-native";
 import { create } from "zustand";
-
-// const api = !process.env.EXPO_API_URL;
-
-// console.log(api);
 
 interface AuthState {
   // User state
@@ -107,7 +104,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       set({ loading: true });
       const response = await axios.post(
-        `http://192.168.0.21:8000/auth/register`,
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/register`,
         {
           fullname,
           email,
@@ -141,17 +138,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         router.replace("/home");
       }
     } catch (error: any) {
-      console.error("Registration error:", error);
+      console.log("Error response:", error?.response?.data?.detail);
+      Alert.alert("Error", error?.response?.data?.detail);
       set({ loading: false });
-
-      // Handle specific error cases
-      if (error.response?.status === 400) {
-        throw new Error("Invalid registration data");
-      } else if (error.response?.status === 400) {
-        throw new Error("User already exists");
-      } else {
-        throw new Error("Registration failed. Please try again.");
-      }
     }
   },
 
@@ -165,10 +154,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
 
       set({ loading: true });
-      const response = await axios.post(`http://192.168.0.21:8000/auth/login`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
 
       if (response.status === 200) {
         const { access_token, user } = response.data;
@@ -195,8 +187,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         router.replace("/home");
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.log("Error response data:", error.response?.data.detail);
+      Alert.alert("Error", error?.response?.data.detail);
+
+      set({
+        loading: false,
+        setIsAuthenticated: (isAuthenticated: boolean) =>
+          set({ isAuthenticated }),
+      });
     }
   },
 
@@ -214,8 +213,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const user = jwtDecode<DecodedToken>(token);
 
       const { data } = await axios(
-        `http://192.168.0.21:8000/auth/user/${user?.id}/`
-      );      
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/user/${user?.id}/`
+      );
 
       set({
         user: data,
@@ -241,6 +240,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         setIsAuthenticated: (isAuthenticated: boolean) =>
           set({ isAuthenticated }),
       });
+      router.dismissAll();
       router.replace("/(auth)/sign-in");
     } catch (error) {
       console.error("Logout error:", error);
@@ -285,26 +285,29 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         }
 
         const { data } = await axios.patch(
-          `http://192.168.0.21:8000/auth/user/${user?.id}`,
+          `${process.env.EXPO_PUBLIC_API_URL}/auth/user/${user?.id}`,
           formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
               Authorization: `Bearer ${token}`,
-            }, 
+            },
           }
         );
 
-        console.log("Updated user:", data.user.profile_pic);
+        // console.log("Updated user:", data);
+        Alert.alert("Success", data?.message);
 
         set({
-          user: data.user, 
+          user: data.user,
           image: data.user.profile_pic,
           loading: false,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      console.log("Error response data:", error.response?.data.detail);
+      Alert.alert("Error", error?.response?.data.detail);
       set({ loading: false });
     }
   },

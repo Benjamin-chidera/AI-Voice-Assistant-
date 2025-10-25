@@ -1,9 +1,7 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import { create } from "zustand";
 import * as Speech from "expo-speech";
-
-
+import { create } from "zustand";
 
 interface Message {
   id: string;
@@ -37,7 +35,7 @@ export const useCommunicationStore = create<CommunicationStore>((set, get) => ({
   ai_response: "",
   url: "",
 
-  communication_response: { 
+  communication_response: {
     ai_response: "",
     user_text: "",
     speech_response: "",
@@ -57,7 +55,7 @@ export const useCommunicationStore = create<CommunicationStore>((set, get) => ({
       } as any);
 
       const { data } = await axios.post(
-        "http://192.168.0.21:8000/chat/communicate",
+        `${process.env.EXPO_PUBLIC_API_URL}/chat/communicate`,
         formData,
         {
           headers: {
@@ -124,40 +122,6 @@ export const useCommunicationStore = create<CommunicationStore>((set, get) => ({
       set({ isProcessing: false });
     }
   },
-
-  // stream: async (aiText: string) => {
-  //   try {
-  //     const token = await SecureStore.getItemAsync("token");
-  
-  //     const response = await axios.post(
-  //       "http://192.168.0.21:8000/chat/stream_communicate",
-  //       { ai_response: aiText },
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //         responseType: "arraybuffer", // get raw binary
-  //       }
-  //     ); 
-   
-  //     console.log("API Response:", response.data);
-  
-  //     // Convert binary to base64
-  //     // const base64Audio = Buffer.from(response.data, 'binary').toString('base64');
-  
-  //     // // Save to local file
-  //     // const localUri = `${FileSystem.Directory}response.mp3`;
-
-  //     // await FileSystem.writeAsStringAsync(localUri, base64Audio, {
-  //     //   encoding: "base64",
-  //     // });
-  
-  //     // Set the local URI in your store
-  //     // set({ url: localUri });
-  
-  //     // console.log("Saved audio to:", localUri);
-  //   } catch (error) {
-  //     console.error("Stream error:", error);
-  //   }
-  // },
 
   clearMessages: () => {
     set({
